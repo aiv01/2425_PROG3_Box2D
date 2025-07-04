@@ -8,5 +8,6 @@ private:
     class b2Body* Body;
     class b2Fixture* Fixture;
     class Quad* Object;
-};
 
+friend class BoxCollider2D;
+};
