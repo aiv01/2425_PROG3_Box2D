@@ -6,6 +6,8 @@ Physics2D::Physics2D(glm::vec2 InGravity, float InFixedDeltaTime)
 {
     b2Vec2 BoxGravity{InGravity.x, InGravity.y};
     World = new b2World(BoxGravity);
+
+    World->SetContactListener(&Listener);
 }
 
 void Physics2D::Step() {

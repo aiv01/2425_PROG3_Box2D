@@ -5,7 +5,7 @@
 #include "ServiceRegistry.h"
 #include "physics/Physics2D.h"
 
-RigidBody2D::RigidBody2D(Quad* InQuad) 
+RigidBody2D::RigidBody2D(Quad* InQuad, RBodyType BodyType) 
     : Object(InQuad)
 {   
 
@@ -13,7 +13,7 @@ RigidBody2D::RigidBody2D(Quad* InQuad)
     {
         //1. Create Body in the Physics World
         b2BodyDef BodyDef;
-        BodyDef.type = b2BodyType::b2_dynamicBody;
+        BodyDef.type = static_cast<b2BodyType>(BodyType);
         BodyDef.position.Set(InQuad->Position.x, InQuad->Position.y);
 
         Physics2D* Physics = ServiceRegistry::GetInstance().GetPhysics();
@@ -22,7 +22,7 @@ RigidBody2D::RigidBody2D(Quad* InQuad)
     else 
     {
         Body = Object->BoxCollider->Body;
-        Body->SetType(b2BodyType::b2_dynamicBody);
+        Body->SetType(static_cast<b2BodyType>(BodyType));
     }
 
     //2. At least one fixture per RigidBody
@@ -60,4 +60,10 @@ void RigidBody2D::AddImpulse(glm::vec2 InForce)
 {
     b2Vec2 Force{InForce.x, InForce.y};
     Body->ApplyLinearImpulseToCenter(Force, true);
+}
+
+void RigidBody2D::SetVelocity(glm::vec2 InVelocity)
+{
+    b2Vec2 Velocity{InVelocity.x, InVelocity.y};
+    Body->SetLinearVelocity(Velocity);
 }

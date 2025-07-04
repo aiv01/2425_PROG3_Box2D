@@ -23,4 +23,6 @@ private:
     Quad* Player;
     glm::vec2 SelectedMoveForce;
     glm::vec2 SelectedJumpForce;
+
+    Quad* Platform;
 };

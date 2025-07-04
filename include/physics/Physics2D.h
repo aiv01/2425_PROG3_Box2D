@@ -1,5 +1,6 @@
 #pragma once
 #include <glm/glm.hpp>
+#include "PhysicsContactListener.h"
 
 class Physics2D {
 
@@ -11,4 +12,6 @@ private:
     glm::vec2 Gravity;
     float FixedDeltaTime;
     class b2World* World;
+
+    PhysicsContactListener Listener;
 };

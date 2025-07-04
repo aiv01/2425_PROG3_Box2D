@@ -3,23 +3,43 @@
 #include "OrthoCamera.h"
 #include "physics/RigidBody2D.h"
 #include "physics/BoxCollider2D.h"
+#include <iostream>
 
 void PlatformScene::Start() 
 {
     Camera = new OrthoCamera(Win.GetWidth(), Win.GetHeight(), 10.f);
 
     Quad* Floor = new Quad(Camera->GetOrthoWidth(), 1.f);
+    Floor->Name = "Floor";
     Floor->Position = glm::vec3{0, -Camera->GetOrthoHeight() * 0.5f + Floor->Scale.y * 0.5f, 0};
     Floor->BoxCollider = new BoxCollider2D(Floor);
 
     Player = new Quad(1, 1);
+    Player->Name = "Player";
     Player->Position = glm::vec3{0, 0, 0};
     Player->Color = Color_Red;
-    Player->BoxCollider = new BoxCollider2D(Player);
-    Player->RigidBody = new RigidBody2D(Player);
+
+    CollisionCallback PlayerCb;
+    PlayerCb.OnEnter = [](Quad* Object) {
+        std::cout << "Player OnEnter: " << Object->Name << "\n";
+    };
+    PlayerCb.OnExit = [](Quad* Object) {
+        std::cout << "Player OnExit: " << Object->Name << "\n";
+    };
+
+    Player->BoxCollider = new BoxCollider2D(Player, PlayerCb);
+    Player->RigidBody = new RigidBody2D(Player, RBodyType::Dynamic);
     
+    Platform = new Quad(3, 1);
+    Platform->Name = "Platform";
+    Platform->Position = glm::vec3(3, 0, 0);
+    Platform->Color = Color_Yellow;
+    Platform->RigidBody = new RigidBody2D(Platform, RBodyType::Kinematic);
+    Platform->BoxCollider = new BoxCollider2D(Platform);
+
     Quads.push_back(Floor);    
     Quads.push_back(Player);
+    Quads.push_back(Platform);
 
     SelectedMoveForce = {0, 0};
     SelectedJumpForce = {0, 0};
@@ -54,7 +74,23 @@ void PlatformScene::Update()
     {
         JumpPressed = Win.IsKeyPressed(Key::KEY_UP);
     }
-   
+    
+    float Speed = 1.5f;
+    float MaxDiff = 2.f;
+    static auto PlatformOrigin = Platform->Position;
+    auto Diff = Platform->Position - PlatformOrigin;
+    static glm::vec2 PlatDir{1, 0};
+    if (Diff.x > MaxDiff) 
+    {
+        PlatDir = {-1, 0};
+    } 
+    else if (Diff.x < -MaxDiff) 
+    {
+        PlatDir = {1, 0};
+    }
+
+    Platform->RigidBody->SetVelocity(PlatDir * Speed);
+
     Renderer.Draw(Quads, Camera);
 }
 

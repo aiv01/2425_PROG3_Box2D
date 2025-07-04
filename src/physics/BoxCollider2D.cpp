@@ -6,8 +6,12 @@
 #include "Quad.h"
 
 BoxCollider2D::BoxCollider2D(Quad* InQuad)
-    : Object(InQuad)
+    : BoxCollider2D(InQuad, {}) { }
+
+BoxCollider2D::BoxCollider2D(Quad* InQuad, CollisionCallback InCallback)
+    : Object(InQuad), UserData(InCallback)
 {
+    UserData.Object = Object;
 
     if (!Object->RigidBody) 
     {
@@ -35,6 +39,7 @@ BoxCollider2D::BoxCollider2D(Quad* InQuad)
     b2FixtureDef fixtureDef;
     fixtureDef.shape = &box;
     fixtureDef.isSensor = false;
-
+    fixtureDef.userData.pointer = reinterpret_cast<uintptr_t>(&UserData);
+    
     Fixture = Body->CreateFixture(&fixtureDef);
 }
