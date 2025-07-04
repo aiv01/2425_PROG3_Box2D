@@ -4,6 +4,7 @@
 #include "OGLWindow.h"
 #include "OGLQuadRenderer.h"
 
+#include <glm/glm.hpp>
 
 class PlatformScene
 {
@@ -18,4 +19,8 @@ private:
     const OGLWindow& Win;
     OGLQuadRender Renderer;
     OrthoCamera* Camera;
+
+    Quad* Player;
+    glm::vec2 SelectedMoveForce;
+    glm::vec2 SelectedJumpForce;
 };

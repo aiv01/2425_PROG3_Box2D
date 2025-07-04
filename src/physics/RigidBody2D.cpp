@@ -43,9 +43,21 @@ RigidBody2D::RigidBody2D(Quad* InQuad)
     Fixture = Body->CreateFixture(&fixtureDef);
 }
 
-
 void RigidBody2D::Update() {
     b2Vec2 B2Pos = Body->GetPosition();
     Object->Position.x = B2Pos.x;
     Object->Position.y = B2Pos.y;
+}
+
+void RigidBody2D::AddForce(glm::vec2 InForce)
+{
+    b2Vec2 Force{InForce.x, InForce.y};
+    Body->ApplyForceToCenter(Force, true);
+}
+
+
+void RigidBody2D::AddImpulse(glm::vec2 InForce)
+{
+    b2Vec2 Force{InForce.x, InForce.y};
+    Body->ApplyLinearImpulseToCenter(Force, true);
 }
